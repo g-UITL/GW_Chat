@@ -71,5 +71,8 @@
     <Image Include="res\MFCChatPrac2Server.ico">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="..\..\..\..\Desktop\Kannu\00_이건우 증명사진\gunoo22_cartoon.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

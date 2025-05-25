@@ -57,7 +57,7 @@ CMFCChatPrac2ClientDlg::CMFCChatPrac2ClientDlg(CWnd* pParent /*=nullptr*/)
 	, m_strStatus(_T(""))
 	, m_strNick(_T(""))
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_hIcon = AfxGetApp()->LoadIcon(IDI_ICON_GEONWULE); //아이콘설정
 }
 
 void CMFCChatPrac2ClientDlg::DoDataExchange(CDataExchange* pDX)
