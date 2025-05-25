@@ -84,6 +84,7 @@ BEGIN_MESSAGE_MAP(CMFCChatPrac2ClientDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SEND, &CMFCChatPrac2ClientDlg::OnClickedButtonSend)
 	ON_BN_CLICKED(IDCANCEL, &CMFCChatPrac2ClientDlg::OnBnClickedCancel)
 	ON_WM_DESTROY()
+	ON_WM_DROPFILES()
 END_MESSAGE_MAP()
 
 
@@ -124,6 +125,10 @@ BOOL CMFCChatPrac2ClientDlg::OnInitDialog()
 
 #if 1 /*gunoo22 250525 로그 초기화*/
 	GW_LogInit_win("C:\\Temp\\test.log");
+#endif
+
+#if 1 /*gunoo22 250525 드래그 앤 드롭 허용설정*/
+	DragAcceptFiles(TRUE); //파일 드롭 허용
 #endif
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -328,3 +333,32 @@ void CMFCChatPrac2ClientDlg::OnDestroy()
 	GW_LogClose_win();
 #endif
 }
+
+
+#if 1 /*gunoo22 250525 드래그 앤 드롭 메시지 등록*/
+void CMFCChatPrac2ClientDlg::OnDropFiles(HDROP hDropInfo)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	UINT nFiles = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0); //드롭된 파일 수
+	if (nFiles > 10)
+	{
+		AfxMessageBox(_T("드래그 앤 드롭은 최대 10개까지 가능합니다."));
+		goto err;
+	}
+
+	for (UINT i = 0; i < nFiles; i++)
+	{
+		TCHAR szFilePath[MAX_PATH] = { 0, };
+		DragQueryFile(hDropInfo, i, szFilePath, MAX_PATH);
+
+		CString strFilePath(szFilePath);
+
+		AfxMessageBox(strFilePath); //파일 경로 확인
+	}
+
+err:
+
+	DragFinish(hDropInfo); //드래그 메모리 해제
+	CDialogEx::OnDropFiles(hDropInfo);
+}
+#endif

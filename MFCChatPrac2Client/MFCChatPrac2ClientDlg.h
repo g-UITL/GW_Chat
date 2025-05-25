@@ -53,4 +53,5 @@ private:
 	int updateUserList(CString strList);
 public:
 	afx_msg void OnDestroy();
+	afx_msg void OnDropFiles(HDROP hDropInfo);
 };
