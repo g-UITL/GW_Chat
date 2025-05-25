@@ -8,6 +8,9 @@
 #include "MFCChatPrac2ClientDlg.h"
 #include "afxdialogex.h"
 
+//Log
+#include "log_win.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -80,6 +83,7 @@ BEGIN_MESSAGE_MAP(CMFCChatPrac2ClientDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_CONNECT, &CMFCChatPrac2ClientDlg::OnClickedButtonConnect)
 	ON_BN_CLICKED(IDC_BUTTON_SEND, &CMFCChatPrac2ClientDlg::OnClickedButtonSend)
 	ON_BN_CLICKED(IDCANCEL, &CMFCChatPrac2ClientDlg::OnBnClickedCancel)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -117,6 +121,10 @@ BOOL CMFCChatPrac2ClientDlg::OnInitDialog()
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	m_socClient.Create();
 	m_socClient.Init(m_hWnd);
+
+#if 1 /*gunoo22 250525 로그 초기화*/
+	GW_LogInit_win("C:\\Temp\\test.log");
+#endif
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -209,9 +217,15 @@ afx_msg LRESULT CMFCChatPrac2ClientDlg::OnReceive(WPARAM wParam, LPARAM lParam)
 		//ex1,ex2,ex3 부분만 updateUserList에 삽입
 		int itmp = strMsg.Find(_T(':'));
 		updateUserList(strMsg.Mid(itmp + 1));
+#ifdef __LOG_TRACE
+		GW_LogTrace_win("UpdateUser [%s]", CStringA(strMsg.Mid(itmp + 1)));
+#endif
 	}
 	else { // 일반적으로 메시지를 받는 경우
 		postListBox(strMsg);
+#ifdef __LOG_TRACE
+		GW_LogTrace_win("Receive [%s]", pTmp);
+#endif
 	}
 	UpdateData(FALSE);
 	return 0;
@@ -226,12 +240,18 @@ void CMFCChatPrac2ClientDlg::OnClickedButtonConnect()
 	{
 		AfxMessageBox(_T("접속 불가"));
 		UpdateData(FALSE);
+#ifdef __LOG_TRACE
+		GW_LogTrace_win("접속 불가[%s]", CStringA(m_strIP));
+#endif
 		return;
 	}
 	else { // 정상 접속시 입력된 닉네임 전송
 		CString strTmp = _T("NICK:") + m_strNick;
 		CStringA straTmp(strTmp);
 		m_socClient.Send(straTmp, straTmp.GetLength());
+#ifdef __LOG_TRACE
+		GW_LogTrace_win("접속 완료[IP: %s][NickName: %s]", CStringA(m_strIP), CStringA(m_strNick));
+#endif
 	}
 }
 
@@ -250,6 +270,9 @@ void CMFCChatPrac2ClientDlg::OnClickedButtonSend()
 	postListBox(_T("나 : ") + m_strInput);
 
 	m_socClient.Send(CT2A(m_strInput), 256);
+#ifdef __LOG_TRACE
+	GW_LogTrace_win("Send [%s]", CStringA(m_strInput));
+#endif
 
 	m_strInput = "";
 	UpdateData(FALSE);
@@ -293,4 +316,15 @@ int CMFCChatPrac2ClientDlg::addUserList(CString strUser)
 {
 	
 	return 0;
+}
+
+//창이 삭제될떄
+void CMFCChatPrac2ClientDlg::OnDestroy()
+{
+	CDialogEx::OnDestroy();
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+#if 1 /*gunoo22 250525 로그 소멸*/
+	GW_LogClose_win();
+#endif
 }

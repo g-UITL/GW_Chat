@@ -51,4 +51,6 @@ private:
 	CString m_strNick;
 	CListBox m_listBoxUser;
 	int updateUserList(CString strList);
+public:
+	afx_msg void OnDestroy();
 };
