@@ -336,6 +336,10 @@ void CMFCChatPrac2ClientDlg::OnDestroy()
 
 
 #if 1 /*gunoo22 250525 드래그 앤 드롭 메시지 등록*/
+#include "util.h"
+#include "TYPE.h"
+#include <stdlib.h>
+
 void CMFCChatPrac2ClientDlg::OnDropFiles(HDROP hDropInfo)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
@@ -354,6 +358,22 @@ void CMFCChatPrac2ClientDlg::OnDropFiles(HDROP hDropInfo)
 		CString strFilePath(szFilePath);
 
 		AfxMessageBox(strFilePath); //파일 경로 확인
+
+#ifdef __LOG_TRACE
+		CStringA straFilePath(strFilePath);
+		UString usOut = { 0, 0 };
+		readFile(straFilePath, &usOut);
+
+		char* pszTmp = (char *)calloc(usOut.length * 2 + 1, 1);
+
+		for (size_t i = 0; i < 2; ++i)
+			snprintf(pszTmp + (i * 2), sizeof(pszTmp), "%02X ", usOut.value[i]);
+
+		GW_LogTrace_win("[name:%s][value(%d):%s]", straFilePath, usOut.length, pszTmp);
+		free(pszTmp);
+
+		GW_FREE(usOut.value);
+#endif
 	}
 
 err:

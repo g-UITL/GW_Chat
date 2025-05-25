@@ -18,11 +18,13 @@ extern "C"
 #define CLIB_API __declspec(dllimport)
 #endif
 
-/*******pOut->value 동적할당하여 리턴하는 함수 외부에서 free를 꼭 해줘야함*******/
+/*******pOut->value 동적할당하여 리턴하는 함수 외부에서 GW_FREE를 꼭 해줘야함*******/
 CLIB_API int readFile(const char* filePath, UString* pOut);
 
 //파일경로에 인풋값을 Write
 CLIB_API int writeFile(const UString* pIn, const char* filePath);
+
+CLIB_API int GW_FREE(void* p);
 
 #ifdef __cplusplus
 }
